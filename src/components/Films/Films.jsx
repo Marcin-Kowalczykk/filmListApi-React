@@ -25,7 +25,9 @@ const Films = ({ listOfFilms }) => {
             key={element.id}
             title={element.title}
             desc={element.desc}
-            link={element.link}
+            director={element.director}
+            producer={element.producer}
+            date={element.date}
           />
         );
       })}

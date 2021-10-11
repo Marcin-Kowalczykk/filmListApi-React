@@ -16,12 +16,29 @@ const Title = styled.h2`
   font-size: 40px;
 `;
 
-const Film = ({ title, desc, link }) => {
+const Footer = styled.footer`
+  background: white;
+  border-radius: 0.5em;
+  padding: 0.5em;
+  font-size: 12px;
+`;
+
+const Description = styled(Footer)`
+  text-align: start;
+  font-size: 15px;
+  margin-bottom: 0.2em;
+`;
+
+const Film = ({ title, desc, producer, date, director }) => {
   return (
     <LiWrapper>
       <Title>{title}</Title>
-      <p>{desc}</p>
-      <p>{link}</p>
+      <Description>{desc}</Description>
+      <Footer>
+        <p>{`Director: ${director}`}</p>
+        <p>{`Producers: ${producer}`}</p>
+        <p>{`Date: ${date}`}</p>
+      </Footer>
     </LiWrapper>
   );
 };

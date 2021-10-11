@@ -35,11 +35,11 @@ const Instruction = styled.p`
   border-bottom: 1px solid #0000006f;
 `;
 
-const Header = () => {
+const Header = ({ onFetchFilms }) => {
   return (
     <Wrapper>
       <Instruction>Click for update movies</Instruction>
-      <Button>Fetch movies</Button>
+      <Button onClick={onFetchFilms}>Fetch movies</Button>
     </Wrapper>
   );
 };
