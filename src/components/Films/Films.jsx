@@ -28,6 +28,7 @@ const Films = ({ listOfFilms }) => {
             director={element.director}
             producer={element.producer}
             date={element.date}
+            place={element.place}
           />
         );
       })}

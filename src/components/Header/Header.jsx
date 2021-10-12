@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import HeaderForm from './HeaderForm';
+import Button from '../Ui/Button';
+
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -11,23 +15,8 @@ const Wrapper = styled.div`
   padding: 1em;
 `;
 
-const Button = styled.button`
-  width: 150px;
-  background: brown;
-  color: white;
-  border: none;
-  border-radius: 1em;
-  padding: 1em;
-  cursor: pointer;
-  outline: none;
-  transition: background-color 0.5s;
-
-  &:hover {
-    background: #7c1919;
-  }
-  &:focus {
-    background: #7c1919;
-  }
+const ButtonsArea = styled.section`
+  display: flex;
 `;
 
 const Instruction = styled.p`
@@ -35,11 +24,41 @@ const Instruction = styled.p`
   border-bottom: 1px solid #0000006f;
 `;
 
-const Header = ({ onFetchFilms }) => {
+const Header = ({ onFetchFilms, onFetchFilmsDB, onAddFilmHandler, isAdded }) => {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const onAddFilm = (dataFromForm) => {
+    onAddFilmHandler(dataFromForm);
+  };
+
+  const hideFormHandler = () => {
+    setIsClicked(false);
+  };
+
+  let content;
+
+  if (isClicked) {
+    content = (
+      <HeaderForm
+        hideForm={hideFormHandler}
+        onAddFilm={onAddFilm}
+        isAdded={isAdded}
+      />
+    );
+  } else {
+    content = (
+      <ButtonsArea>
+        <Button onClick={onFetchFilms}>Fetch films from API</Button>
+        <Button onClick={onFetchFilmsDB}>Fetch films from DB</Button>
+        <Button onClick={() => setIsClicked(true)}>Add new film to DB</Button>
+      </ButtonsArea>
+    );
+  }
+
   return (
     <Wrapper>
-      <Instruction>Click for update movies</Instruction>
-      <Button onClick={onFetchFilms}>Fetch movies</Button>
+      {!isClicked && <Instruction>Click for fetch films or add new one</Instruction>}
+      {content}
     </Wrapper>
   );
 };

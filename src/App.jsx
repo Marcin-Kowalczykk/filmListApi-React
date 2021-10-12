@@ -27,10 +27,12 @@ function App() {
   const [films, setFilms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isAdded, setIsAdded] = useState(false);
 
-  const fetchFilmsHandler = useCallback(async () => {
+  const fetchFilmsHandlerAPI = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    setFilms([]);
 
     try {
       const response = await fetch('https://swapi.dev/api/films/');
@@ -41,7 +43,7 @@ function App() {
 
       const data = await response.json();
 
-      const updateFilmsData = data.results.map((filmData) => {
+      const updateFilmsDataAPI = data.results.map((filmData) => {
         return {
           id: filmData.episode_id,
           title: filmData.title,
@@ -49,18 +51,73 @@ function App() {
           director: filmData.director,
           producer: filmData.producer,
           date: filmData.release_date,
+          place: 'From Star Wars API',
         };
       });
-      setFilms(updateFilmsData);
+      setFilms(updateFilmsDataAPI);
     } catch (error) {
       setError(error.message);
     }
     setIsLoading(false);
   }, []);
 
+  const fetchFilmsHandlerFireBase = async () => {
+    setIsLoading(true);
+    setError(null);
+    setFilms([]);
+
+    try {
+      const response = await fetch(
+        'https://react-httprequest-d5649-default-rtdb.europe-west1.firebasedatabase.app/films.json'
+      );
+
+      if (!response.ok) {
+        throw new Error('something went wrong !!!');
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      const updateFilmsDataDB = [];
+
+      for (const key in data) {
+        updateFilmsDataDB.push({
+          id: key,
+          title: data[key].title,
+          desc: data[key].desc,
+          director: data[key].director,
+          producer: data[key].producer,
+          date: data[key].date,
+          place: data[key].place,
+        });
+      }
+      setFilms(updateFilmsDataDB);
+    } catch (error) {
+      setError(error.message);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    fetchFilmsHandler();
-  }, [fetchFilmsHandler]);
+    fetchFilmsHandlerAPI();
+  }, [fetchFilmsHandlerAPI]);
+
+  const addFilmHandler = async (filmsFromForm) => {
+    setIsAdded(true);
+    const response = await fetch(
+      'https://react-httprequest-d5649-default-rtdb.europe-west1.firebasedatabase.app/films.json/',
+      {
+        method: 'POST',
+        body: JSON.stringify(filmsFromForm),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    setIsAdded(false);
+  };
 
   let content;
 
@@ -76,7 +133,12 @@ function App() {
     <Fragment>
       <GlobalStyle />
       <Wrapper>
-        <Header onFetchFilms={fetchFilmsHandler} />
+        <Header
+          onFetchFilms={fetchFilmsHandlerAPI}
+          onFetchFilmsDB={fetchFilmsHandlerFireBase}
+          onAddFilmHandler={addFilmHandler}
+          isAdded={isAdded}
+        />
       </Wrapper>
       <Wrapper>{content}</Wrapper>
     </Fragment>

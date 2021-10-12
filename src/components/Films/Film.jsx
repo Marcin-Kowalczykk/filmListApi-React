@@ -29,9 +29,10 @@ const Description = styled(Footer)`
   margin-bottom: 0.2em;
 `;
 
-const Film = ({ title, desc, producer, date, director }) => {
+const Film = ({ title, desc, producer, date, director, place }) => {
   return (
     <LiWrapper>
+      <p>{place}</p>
       <Title>{title}</Title>
       <Description>{desc}</Description>
       <Footer>
