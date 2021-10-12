@@ -17,6 +17,8 @@ const Wrapper = styled.div`
 
 const ButtonsArea = styled.section`
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 `;
 
 const Instruction = styled.p`
