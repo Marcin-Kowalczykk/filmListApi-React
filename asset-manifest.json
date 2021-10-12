@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/filmListApi-React/static/js/main.172f91ad.chunk.js",
-    "main.js.map": "/filmListApi-React/static/js/main.172f91ad.chunk.js.map",
+    "main.js": "/filmListApi-React/static/js/main.3d475c65.chunk.js",
+    "main.js.map": "/filmListApi-React/static/js/main.3d475c65.chunk.js.map",
     "runtime-main.js": "/filmListApi-React/static/js/runtime-main.3472c8a6.js",
     "runtime-main.js.map": "/filmListApi-React/static/js/runtime-main.3472c8a6.js.map",
     "static/js/2.51fb2c8a.chunk.js": "/filmListApi-React/static/js/2.51fb2c8a.chunk.js",
@@ -12,6 +12,6 @@
   "entrypoints": [
     "static/js/runtime-main.3472c8a6.js",
     "static/js/2.51fb2c8a.chunk.js",
-    "static/js/main.172f91ad.chunk.js"
+    "static/js/main.3d475c65.chunk.js"
   ]
 }
