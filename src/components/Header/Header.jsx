@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import HeaderForm from './HeaderForm';
 import Button from '../Ui/Button';
 
+import useHttp from '../../hooks/useHttp';
+
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -26,11 +28,27 @@ const Instruction = styled.p`
   border-bottom: 1px solid #0000006f;
 `;
 
-const Header = ({ onFetchFilms, onFetchFilmsDB, onAddFilmHandler, isAdded }) => {
+const Header = ({ onFetchFilms, onFetchFilmsDB }) => {
   const [isClicked, setIsClicked] = useState(false);
 
-  const onAddFilm = (dataFromForm) => {
-    onAddFilmHandler(dataFromForm);
+  const { isAdded, sendRequest: sendFilmRequest } = useHttp();
+
+  const holdData = (dataFromDB) => {
+    console.log(dataFromDB);
+  };
+
+  const addFilmHandler = async (dataFromForm) => {
+    sendFilmRequest(
+      {
+        url: 'https://react-httprequest-d5649-default-rtdb.europe-west1.firebasedatabase.app/films.json/',
+        method: 'POST',
+        body: dataFromForm,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      holdData.bind(null, dataFromForm)
+    );
   };
 
   const hideFormHandler = () => {
@@ -43,7 +61,7 @@ const Header = ({ onFetchFilms, onFetchFilmsDB, onAddFilmHandler, isAdded }) => 
     content = (
       <HeaderForm
         hideForm={hideFormHandler}
-        onAddFilm={onAddFilm}
+        onAddFilm={addFilmHandler}
         isAdded={isAdded}
       />
     );

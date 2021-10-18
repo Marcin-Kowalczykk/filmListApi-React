@@ -1,7 +1,9 @@
-import React, { Fragment, useEffect, useState, useCallback } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 import Header from './components/Header/Header';
 import Films from './components/Films/Films';
+
+import useHttp from './hooks/useHttp';
 //import { ExampleMovies } from './components/Films/ExampleMovies';
 
 import GlobalStyle from './components/Ui/GlobalStyle';
@@ -25,42 +27,57 @@ const P = styled.p`
 function App() {
   console.log('component running');
   const [films, setFilms] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [isAdded, setIsAdded] = useState(false);
 
-  const fetchFilmsHandlerAPI = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const { isLoading, error, sendRequest: fetchFilmsHandlerAPI } = useHttp();
+
+  const filmsFromHttpApi = (dataFromHttp) => {
     setFilms([]);
+    const updateFilmsDataAPI = dataFromHttp.results.map((filmData) => {
+      return {
+        id: filmData.episode_id,
+        title: filmData.title,
+        desc: filmData.opening_crawl,
+        director: filmData.director,
+        producer: filmData.producer,
+        date: filmData.release_date,
+        place: 'From Star Wars API',
+      };
+    });
+    setFilms(updateFilmsDataAPI);
+  };
+  useEffect(() => {
+    fetchFilmsHandlerAPI({ url: 'https://swapi.dev/api/films/' }, filmsFromHttpApi);
+  }, [fetchFilmsHandlerAPI]);
 
-    try {
-      const response = await fetch('https://swapi.dev/api/films/');
+  const { sendRequest: sendFilmRequest } = useHttp();
 
-      if (!response.ok) {
-        throw new Error('something went wrong !!!');
-      }
+  const filmsFromHttpDB = (dataFromHttp) => {
+    setFilms([]);
+    const updateFilmsDataDB = [];
 
-      const data = await response.json();
-
-      const updateFilmsDataAPI = data.results.map((filmData) => {
-        return {
-          id: filmData.episode_id,
-          title: filmData.title,
-          desc: filmData.opening_crawl,
-          director: filmData.director,
-          producer: filmData.producer,
-          date: filmData.release_date,
-          place: 'From Star Wars API',
-        };
+    for (const key in dataFromHttp) {
+      updateFilmsDataDB.push({
+        id: key,
+        title: dataFromHttp[key].title,
+        desc: dataFromHttp[key].desc,
+        director: dataFromHttp[key].director,
+        producer: dataFromHttp[key].producer,
+        date: dataFromHttp[key].date,
+        place: dataFromHttp[key].place,
       });
-      setFilms(updateFilmsDataAPI);
-    } catch (error) {
-      setError(error.message);
     }
-    setIsLoading(false);
-  }, []);
-
+    setFilms(updateFilmsDataDB);
+  };
+  const fetchFilmsHandlerFireBase = () => {
+    setFilms([]);
+    sendFilmRequest(
+      {
+        url: 'https://react-httprequest-d5649-default-rtdb.europe-west1.firebasedatabase.app/films.json',
+      },
+      filmsFromHttpDB
+    );
+  };
+  /*
   const fetchFilmsHandlerFireBase = async () => {
     setIsLoading(true);
     setError(null);
@@ -97,28 +114,7 @@ function App() {
     }
     setIsLoading(false);
   };
-
-  useEffect(() => {
-    fetchFilmsHandlerAPI();
-  }, [fetchFilmsHandlerAPI]);
-
-  const addFilmHandler = async (filmsFromForm) => {
-    setIsAdded(true);
-    const response = await fetch(
-      'https://react-httprequest-d5649-default-rtdb.europe-west1.firebasedatabase.app/films.json/',
-      {
-        method: 'POST',
-        body: JSON.stringify(filmsFromForm),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    const data = await response.json();
-    console.log(data);
-    setIsAdded(false);
-  };
-
+*/
   let content;
 
   if (films.length > 0 && !isLoading) {
@@ -136,8 +132,6 @@ function App() {
         <Header
           onFetchFilms={fetchFilmsHandlerAPI}
           onFetchFilmsDB={fetchFilmsHandlerFireBase}
-          onAddFilmHandler={addFilmHandler}
-          isAdded={isAdded}
         />
       </Wrapper>
       <Wrapper>{content}</Wrapper>
